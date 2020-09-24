@@ -25,10 +25,8 @@
 	<%
 		ac = (AccountModel) session.getAttribute("userDetails");
 		String account_no = ac.getAccount_no();
-		JDBC_Connect connect = new JDBC_Connect();
-		Connection conn = connect.getConnection();
 		DatabaseOperations operations = new DatabaseOperations();
-		ac = operations.getAccountDetails(conn,account_no);
+		ac = operations.getAccountDetails(account_no);
 	%>
 	<div class="container-fullwidth">
 		<div class="row" style="margin-top: 50px;">

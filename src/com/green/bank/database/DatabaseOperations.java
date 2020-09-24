@@ -40,62 +40,59 @@ public class DatabaseOperations{
 		return (count1 > 0);
 	}
 	
-	public AccountModel getAccountDetails(String username) throws DatabaseException {
-		return null;
-//		Connection conn = JDBC_Connect.getConnection();
-//		AccountModel am = new AccountModel();
-//		Statement stmt = conn.createStatement();
-//		ResultSet rs = stmt.executeQuery("select * from account where id ='" + username + "'");
-//		while (rs.next()) {
-//
-//			// Setting all variables to model class
-//			am = new AccountModel();
-//			am.setAccount_no(rs.getString(1));
-//			am.setFirst_name(rs.getString(2));
-//			am.setLast_name(rs.getString(3));
-//			am.setAddress(rs.getString(4));
-//			am.setCity(rs.getString(5));
-//			am.setBranch(rs.getString(6));
-//			am.setZip(rs.getString(7));
-//			am.setUsername(rs.getString(8));
-//			am.setPassword(rs.getString(9));
-//			am.setPhone_number(rs.getString(10));
-//			am.setEmail(rs.getString(11));
-//			am.setAccount_type(rs.getString(12));
-//			am.setReg_date(rs.getString(13));
-//		}
-//		ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + am.getAccount_no() + "'");
-//		while (rs1.next()) {
-//			am.setAmount(rs1.getInt(2));
-//		}
-//		return am;
+	public AccountModel getAccountDetails(String accountNo) throws DatabaseException {
+		AccountModel am = new AccountModel();
+		try {
+			Connection conn = JDBC_Connect.getConnection();
+			Statement stmt = conn.createStatement();
+
+			ResultSet rs = stmt.executeQuery("select * from account where id ='" + accountNo + "'");
+			while (rs.next()) {
+
+				// Setting all variables to model class
+				am = new AccountModel();
+				am.setAccount_no(rs.getString(1));
+				am.setFirst_name(rs.getString(2));
+				am.setLast_name(rs.getString(3));
+				am.setAddress(rs.getString(4));
+				am.setCity(rs.getString(5));
+				am.setBranch(rs.getString(6));
+				am.setZip(rs.getString(7));
+				am.setUsername(rs.getString(8));
+				am.setPassword(rs.getString(9));
+				am.setPhone_number(rs.getString(10));
+				am.setEmail(rs.getString(11));
+				am.setAccount_type(rs.getString(12));
+				am.setReg_date(rs.getString(13));
+
+			}
+			ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + am.getAccount_no() + "'");
+			while (rs1.next()) {
+				am.setAmount(rs1.getInt(2));
+			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Error saving Account details into the db" + e.getMessage());
+		}
+		return am;
 	}
 
 	public boolean insertDepositScheme(DepositSchemeModel model) throws Exception {
-		int count1 = 0;
+		
 		try {
-
 			Connection conn = JDBC_Connect.getConnection();
-
-			// getting current date
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Date date = new Date();
-			String current_time = dateFormat.format(date);
-
 			PreparedStatement ps1 = conn
-					.prepareStatement("insert into deposit(id,year,interest,amount,deposit_date) values('"
-							+ model.getAccount_no() + "','" + model.getYear() + "','" + model.getInterest_rate() + "','"
-							+ model.getAmount() + "','" + current_time + "')");
-			count1 = ps1.executeUpdate();
-			System.out.println("Inserted " + count1 + " row");
-
-			conn.close();
-
+					.prepareStatement("insert into deposit(id,year,interest,amount,deposit_date,value) values(?,?,?,?,?,?)");
+			ps1.setString(1, model.getAccount_no());
+			ps1.setLong(2, model.getYear());
+			ps1.setLong(3, model.getInterest_rate());
+			ps1.setLong(4, model.getAmount());
+			ps1.setString(5, model.getDeposit_date());
+			ps1.setString(6, model.getValue());
+			int row = ps1.executeUpdate();
+			return row ==1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseException("Error saving Account details into the db" + e.getMessage());
 		}
-
-		return ((count1 > 0));
 	}
 
 	public ArrayList<LoanModel> getLoanList(Connection conn) throws Exception {
@@ -113,15 +110,23 @@ public class DatabaseOperations{
 			loanModel.setLast_name(rs.getString(5));
 			loanModel.setAddress(rs.getString(6));
 			loanModel.setEmail(rs.getString(7));
-
 			loanList.add(loanModel);
-
 		}
-
 		return loanList;
-
 	}
-
+	
+	public boolean UpdateDepositeSchemeAmount (String account_no, int main_amount) throws SQLException, DatabaseException {
+		try {
+			Connection conn = JDBC_Connect.getConnection();
+			Statement s = conn.createStatement();
+			s.executeQuery("update amount set amount ='"+ main_amount + "' where id ='" + account_no + "'");
+		}
+		catch (DatabaseException e) {
+			throw new DatabaseException("Error updating the amount in the db! "+ e.getMessage());
+		}
+		return false;		
+	}
+	
 	public void UpdateAmount(String account_no, int loan_amount) throws SQLException, DatabaseException {
 		int current_amount = 0;
 		Connection conn = JDBC_Connect.getConnection();
@@ -131,7 +136,6 @@ public class DatabaseOperations{
 
 		while (rs1.next()) {
 			current_amount = rs1.getInt(2);
-
 		}
 
 		current_amount += loan_amount;
@@ -148,7 +152,6 @@ public class DatabaseOperations{
 		ps1.executeUpdate();
 
 		conn.close();
-
 	}
 	
 	public String newAccountNumber() throws DatabaseException {
@@ -206,12 +209,14 @@ public class DatabaseOperations{
 			p.setString(13, user.getReg_date());
 			
 			int row = p.executeUpdate();
-			return row ==1;
+			if (row !=1) {
+				return false;
+			}
 			
 		} catch (SQLException e) {
 			throw new DatabaseException("Error saving Account details into the db" + e.getMessage());
 		}
-
+		return true;
 	}
 
 

@@ -13,10 +13,8 @@
 <%
 	ac = (AccountModel) session.getAttribute("userDetails");
 	String account_no = ac.getAccount_no();
-	JDBC_Connect connect = new JDBC_Connect();
-	Connection conn = connect.getConnection();
 	DatabaseOperations operations = new DatabaseOperations();
-	ac = operations.getAccountDetails(conn, account_no);
+	ac = operations.getAccountDetails(account_no);
 %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">

@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import com.green.bank.database.DatabaseOperations;
 import com.green.bank.model.AccountModel;
 import com.green.bank.util.DatabaseException;
 
+@WebServlet("/CreateAccountServlet")
 public class CreateAccountServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -9117765301101502035L;
@@ -85,14 +87,15 @@ public class CreateAccountServlet extends HttpServlet {
 			
 			try {
 				if (service.addNewAccount(am)) {
-					RequestDispatcher rd = request.getRequestDispatcher("create_account_progress.jsp");
-					rd.forward(request, response);
+//					RequestDispatcher rd = request.getRequestDispatcher("create_account_progress.jsp");
+//					rd.forward(request, response);
+					out.print("IT FKING WORK");
 				}
 				else {
-					request.getRequestDispatcher("create_account.jsp").forward(request, response);
-					out.println("Error");
+					out.print("IT DIDNT WORK");
+//					request.getRequestDispatcher("create_account.jsp").forward(request, response);
 				}
-			} catch (DatabaseException | ServletException | IOException e) {
+			} catch (DatabaseException e) {
 				out.println("Register fail. Please try again later, " + e.getMessage());
 				request.getRequestDispatcher("create_account.jsp").forward(request, response);
 				return;
@@ -103,5 +106,4 @@ public class CreateAccountServlet extends HttpServlet {
 			rd.forward(request, response);
 		}
 	}
-
 }

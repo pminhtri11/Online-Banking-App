@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+//@WebFilter(urlPatterns = "/homeOnly")
 @WebFilter(urlPatterns = "*")
 public class LoggingFilter implements Filter {
 	Logger logger = Logger.getLogger(LoggingFilter.class);

@@ -26,8 +26,8 @@
 					<div class="row">
 						<%
 							String errorMassage = (String) request.getAttribute("error");
-						System.out.println(errorMassage);
-						if (errorMassage != null) {
+// 							System.out.println(errorMassage);
+							if (errorMassage != null) {
 						%>
 						<div class="form-group">
 							<p class="bg-danger text-center text-danger"
@@ -137,8 +137,8 @@
 								</div>
 								<%
 									String not_match = (String) request.getAttribute("not_match");
-								System.out.println(not_match);
-								if (not_match != null && not_match.equals("yes")) {
+// 									System.out.println(not_match);
+									if (not_match != null && not_match.equals("yes")) {
 								%>
 								<div class="form-group">
 									<p class="bg-danger text-center text-danger"

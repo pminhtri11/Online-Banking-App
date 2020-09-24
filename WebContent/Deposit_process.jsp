@@ -25,15 +25,12 @@
 	<%
 		ac = (AccountModel) session.getAttribute("userDetails");
 		String account_no = ac.getAccount_no();
-		JDBC_Connect connect = new JDBC_Connect();
-		Connection conn = connect.getConnection();
 		DatabaseOperations operations = new DatabaseOperations();
-		ac = operations.getAccountDetails(conn,account_no);
+		ac = operations.getAccountDetails(account_no);
 	%>
 	<div class="container-fullwidth">
 		<div class="row" style="margin-top: 50px;">
-			<div class="alert alert-success col-md-4 col-md-offset-4"
-				role="alert">
+			<div class="alert alert-success col-md-4 col-md-offset-4" role="alert">
 				<h4 class="alert-heading">Success!</h4>
 				<p>
 					<strong>Your Deposit operation is complete.</strong>
