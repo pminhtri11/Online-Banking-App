@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DepositSchemeModel {
-	String account_no;
-	String deposit_date;
+	String accountNo;
+	String depositDate;
 	String value;
 	int year;
-	int interest_rate;
+	int interestRate;
 	int amount;
 }

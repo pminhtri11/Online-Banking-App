@@ -15,71 +15,47 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.green.bank.database.DatabaseOperations;
 import com.green.bank.database.JDBC_Connect;
 import com.green.bank.model.AccountModel;
 import com.green.bank.util.DatabaseException;
 
 public class WithdrawServlet extends HttpServlet {
-	String account_no, username, password;
-	Connection conn;
-	Statement stmt;
-	boolean pass_wrong = false;
-	int current_amount, withdraw_amount;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		account_no = request.getParameter("account_no");
-		username = request.getParameter("username");
+		String accountNo, password;
+		boolean pass_wrong = false;
+		int currentAmount, withdrawAmount;
+		accountNo = request.getParameter("account_no");
 		password = request.getParameter("password");
-		withdraw_amount = Integer.parseInt(request.getParameter("amount"));
-
+		withdrawAmount = Integer.parseInt(request.getParameter("amount"));		
+		DatabaseOperations service = new DatabaseOperations();		
 		try {
-			JDBC_Connect connect = new JDBC_Connect();
-			conn = connect.getConnection();
-
-			stmt = conn.createStatement();
-
-			ResultSet rs = stmt.executeQuery("select * from account where id='" + account_no + "' and username='"
-					+ username + "' and password='" + password + "'");
-
-			if (!rs.isBeforeFirst()) {
+			if (!service.checkPassword(accountNo, password)) {
 				request.setAttribute("isPassOK", "No");
 				RequestDispatcher rd = request.getRequestDispatcher("withdraw.jsp");
 				rd.forward(request, response);
-			} else {
+			} 
+			else {
 				System.out.println("I am in");
-				ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + account_no + "'");
+				currentAmount  = service.getCurrent(accountNo);
 
-				while (rs1.next()) {
-					current_amount = rs1.getInt(2);
-
-					System.out.println(current_amount);
-				}
-
-				if (current_amount >= withdraw_amount) {
-					current_amount -= withdraw_amount;
-
-					PreparedStatement ps = conn.prepareStatement("update amount set amount=? where id= ?");
-					ps.setInt(1, current_amount);
-					ps.setString(2, account_no);
-					ps.executeUpdate();
-
-					conn.close();
-
-					RequestDispatcher rd = request.getRequestDispatcher("Withdraw_process.jsp");
-					rd.forward(request, response);
+				if (currentAmount >= withdrawAmount) 
+				{
+					currentAmount -= withdrawAmount;
+					if (service.updateAmount(accountNo, currentAmount)) {
+						RequestDispatcher rd = request.getRequestDispatcher("Withdraw_process.jsp");
+						rd.forward(request, response);
+					}
 				} else {
-					conn.close();
 					request.setAttribute("EnoughMoney", "No");
 					RequestDispatcher rd = request.getRequestDispatcher("withdraw.jsp");
 					rd.forward(request, response);
 				}
-
 			}
-
-		} catch (SQLException | DatabaseException e) {
-			e.printStackTrace();
+		} catch (DatabaseException e) {
+			System.out.println("Unable to complete your request " + e.getMessage());
 		}
 	}
-
 }

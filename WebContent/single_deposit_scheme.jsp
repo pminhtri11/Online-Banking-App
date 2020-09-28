@@ -74,7 +74,7 @@
 								if (ac != null) {
 							%>
 							<input type="hidden" name="account_no"
-								value="<%=ac.getAccount_no()%>" />
+								value="<%=ac.getAccountNo()%>" />
 
 							<%
 								if (value.equals("Bronze")) {

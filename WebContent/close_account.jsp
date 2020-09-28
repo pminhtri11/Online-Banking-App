@@ -35,7 +35,7 @@
 					</div>
 					<label class="col-md-4 control-label">Account No</label>
 					<div class="col-sm-8 form-group">
-						<input type="text" value="<%=ac.getAccount_no() %>" required placeholder="Enter Account No.."
+						<input type="text" value="<%=ac.getAccountNo() %>" required placeholder="Enter Account No.."
 							class="form-control">
 					</div>
 					<label class="col-md-4 control-label">User Name</label>

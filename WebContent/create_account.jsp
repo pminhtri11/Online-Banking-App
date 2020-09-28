@@ -9,9 +9,8 @@
 <link rel="stylesheet" type="text/css" href="css/create_account.css">
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
+</script> <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/passwordChecker.js"></script>
 </head>
 <body>
@@ -26,40 +25,49 @@
 					<div class="row">
 						<%
 							String errorMassage = (String) request.getAttribute("error");
-// 							System.out.println(errorMassage);
-							if (errorMassage != null) {
+						// 							System.out.println(errorMassage);
+						if (errorMassage != null) {
 						%>
 						<div class="form-group">
 							<p class="bg-danger text-center text-danger"
 								style="font-size: 18px;"><%=errorMassage%></p>
 						</div>
 						<%
-							}
+						}
+						String requirement = (String) request.getAttribute("fail");
+						if (requirement !=null) {
 						%>
-						<form action="CreateAccountServlet" method="post">
+						<div class="form-group">
+							<p class="bg-danger text-center text-danger"
+								style="font-size: 18px;">Your entry does not meet the requirements</p>
+						</div>
+						<%}%>
+						<form action="CreateAccountServlet" method="post"
+							name="signUpForm" >
 							<div class="col-sm-12">
 								<div class="row">
 									<div class="col-sm-6 form-group">
 										<label class="required">First Name</label><input type="text"
 											placeholder="Enter First Name Here.." class="form-control"
-											name="first_name" required>
+											name="first_name" required minlength="2" maxlength="15">
 									</div>
 									<div class="col-sm-6 form-group">
 										<label class="required">Last Name</label> <input type="text"
 											placeholder="Enter Last Name Here.." class="form-control"
-											name="last_name" required>
+											name="last_name" required minlength="2" maxlength="15">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="required">Address</label>
 									<textarea placeholder="Enter Address Here.." rows="3"
-										class="form-control" name="address" required></textarea>
+										class="form-control" name="address" required minlength="5"
+										maxlength="50"></textarea>
 								</div>
 								<div class="row">
 									<div class="col-sm-4 form-group">
 										<label>City</label> <input type="text"
 											placeholder="Enter City Name Here.." class="form-control"
-											name="city">
+											name="city" minlength="2" maxlength="30">
 									</div>
 									<div class="col-sm-4 form-group">
 										<label class="required">Branch Name</label>
@@ -78,21 +86,22 @@
 										</div>
 									</div>
 									<div class="col-sm-4 form-group">
-										<label>Zip</label> <input type="text"
+										<label>Zip</label> <input type="number"
 											placeholder="Enter Zip Code Here.." class="form-control"
-											name="zip">
+											name="zip" minlength="2" maxlength="10">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="required">User Name</label> <input type="text"
 										placeholder="Enter User Name Here.." class="form-control"
-										name="username" required>
+										name="username" required minlength="8" maxlength="15">
 								</div>
 								<div class="row">
 									<div class="col-sm-6 form-group">
 										<label class="required">Password</label> <input
 											type="password" required placeholder="Enter Password Here.."
-											min="5" class="form-control" name="password" id="password">
+											min="5" class="form-control" name="password" id="password"
+											minlength="8" maxlength="15">
 									</div>
 									<div class="col-sm-6 form-group">
 										<label class="required">Re-password</label> <input
@@ -104,14 +113,16 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="required">Phone Number</label> <input type="tel"
-										placeholder="Enter Phone Number Here.." class="form-control"
-										name="phone" required>
+									<label class="required">Phone Number</label> <input
+										type="number" placeholder="Enter your 10 digit phone number"
+										class="form-control" name="phone" required minlength="9"
+										maxlength="10">
 								</div>
 								<div class="form-group">
 									<label class="required">Email Address</label> <input
-										type="text" placeholder="Enter Email Address Here.."
-										class="form-control" name="email" required>
+										type="email" placeholder="Enter Email Address Here.."
+										class="form-control" name="email" required minlength="5"
+										maxlength="50">
 								</div>
 								<div class="row">
 									<div class="col-sm-6 form-group">
@@ -125,9 +136,10 @@
 										</div>
 									</div>
 									<div class="col-sm-6 form-group">
-										<label class="required">Amount</label> <input type="number"
-											placeholder="Enter Intial Amount Here.." class="form-control"
-											name="amount" required>
+										<label class="required">Amount</label>
+										 <input type="number" placeholder="Enter your initial Amount"
+											class="form-control" name="amount" required minlength="1"
+											maxlength="10">
 									</div>
 								</div>
 								<div class="form-group">
@@ -137,8 +149,8 @@
 								</div>
 								<%
 									String not_match = (String) request.getAttribute("not_match");
-// 									System.out.println(not_match);
-									if (not_match != null && not_match.equals("yes")) {
+								// 									System.out.println(not_match);
+								if (not_match != null && not_match.equals("yes")) {
 								%>
 								<div class="form-group">
 									<p class="bg-danger text-center text-danger"
@@ -160,5 +172,6 @@
 			<jsp:include page="footer.jsp"></jsp:include>
 		</div>
 	</div>
+
 </body>
 </html>

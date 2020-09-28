@@ -41,11 +41,11 @@
 				</p>
 				<p class="mb-0">
 					<b>Account Number: </b>
-					<%=model.getAccount_no()%>
+					<%=model.getAccountNo()%>
 				</p>
 				<p class="mb-0">
 					<b>Loan Amount: </b>
-					<%= model.getLoan_amount() %>
+					<%= model.getLoanAmount() %>
 				</p>
 			</div>
 		</div>
@@ -55,7 +55,7 @@
 		<div class="container-fullwidth">
 			<div class="row" style="margin-top: 50px;">
 				<div class="alert alert-danger col-md-4 col-md-offset-4" role="alert">
-					<strong>Oh snap!</strong> Sometime wrong with Database insert.
+					<strong>Oh snap!</strong> Something wrong with Database insert.
 				</div>
 			</div>
 		</div>

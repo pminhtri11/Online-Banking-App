@@ -28,49 +28,43 @@ public class DepositSchemeServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String account_no, deposit_amount, value;
-		int year, interest_rate, amount = 0;
-		Connection conn;
-		try {
-			conn = JDBC_Connect.getConnection();
-		} catch (DatabaseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		Statement stmt;
-		boolean pass_wrong = false;
+		String accountNo;
+		String depositAmount;
+		String value;
+		int year;
+		int interestRate;
+		int amount = 0;
+		boolean wrongPass = false;
 		
-		account_no = request.getParameter("account_no");
+		accountNo = request.getParameter("account_no");
 		year = Integer.parseInt(request.getParameter("year"));
-		interest_rate = Integer.parseInt(request.getParameter("interest_rate"));
-		deposit_amount = request.getParameter("deposit_amount");
+		interestRate = Integer.parseInt(request.getParameter("interest_rate"));
+		depositAmount = request.getParameter("deposit_amount");
 		value = request.getParameter("value");
 
-		if (deposit_amount.equals("1,00,000&#2547;")) {
+		if (depositAmount.equals("1,00,000&#2547;")) {
 			amount = 100000;
-		} else if (deposit_amount.equals("3,00,000&#2547;")) {
+		} else if (depositAmount.equals("3,00,000&#2547;")) {
 			amount = 300000;
-		} else if (deposit_amount.equals("5,00,000&#2547;")) {
+		} else if (depositAmount.equals("5,00,000&#2547;")) {
 			amount = 500000;
 		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();			
-		String current_time = dateFormat.format(date);
+		String depositDate = dateFormat.format(date);
 		
-		DepositSchemeModel dpModel = new DepositSchemeModel(account_no, current_time, value, year,interest_rate, amount);
+		DepositSchemeModel dpModel = new DepositSchemeModel();
 
 		try {
 			DatabaseOperations operations = new DatabaseOperations();
-			AccountModel am = operations.getAccountDetails(account_no);
+			AccountModel am = operations.getAccountDetails(accountNo);
 
 			if (am.getAmount() >= amount) {
-				int main_amount  = am.getAmount() - amount;
-				
-				operations.UpdateDepositeSchemeAmount(account_no, main_amount);				
+				int main_amount  = am.getAmount() - amount;				
+				operations.UpdateDepositeSchemeAmount(accountNo, main_amount);				
 				boolean allRight = operations.insertDepositScheme(dpModel);
 				request.setAttribute("DepositScheme", dpModel);
-				request.setAttribute("allRight", allRight);
-				
+				request.setAttribute("allRight", allRight);				
 				RequestDispatcher rd = request.getRequestDispatcher("deposit_scheme_progress.jsp");
 				rd.forward(request, response);
 

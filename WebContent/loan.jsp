@@ -39,15 +39,15 @@
 										type="number" class="form-control input-sm" id="input"
 										Name="loan_amount" placeholder="Enter loan amount"> <input
 										type="hidden" name="account_no"
-										value="<%=ac.getAccount_no()%>" />
+										value="<%=ac.getAccountNo()%>" />
 										
 										<input
 										type="hidden" name="first_name"
-										value="<%=ac.getFirst_name()%>" />
+										value="<%=ac.getFName()%>" />
 										
 										<input
 										type="hidden" name="last_name"
-										value="<%=ac.getLast_name()%>" />
+										value="<%=ac.getLName()%>" />
 										
 										<input
 										type="hidden" name="address"

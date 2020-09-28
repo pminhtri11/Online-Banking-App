@@ -27,21 +27,21 @@ public class UserRepository {
 			} else {
 				if (rs.next()) {
 					// Setting all variables to model class
-					am.setAccount_no(rs.getString(1));
-					am.setFirst_name(rs.getString(2));
-					am.setLast_name(rs.getString(3));
+					am.setAccountNo(rs.getString(1));
+					am.setFName(rs.getString(2));
+					am.setLName(rs.getString(3));
 					am.setAddress(rs.getString(4));
 					am.setCity(rs.getString(5));
 					am.setBranch(rs.getString(6));
 					am.setZip(rs.getString(7));
 					am.setUsername(rs.getString(8));
 					am.setPassword(rs.getString(9));
-					am.setPhone_number(rs.getString(10));
+					am.setPNumber(rs.getString(10));
 					am.setEmail(rs.getString(11));
-					am.setAccount_type(rs.getString(12));
-					am.setReg_date(rs.getString(13));
+					am.setAccountType(rs.getString(12));
+					am.setRegisterDate(rs.getString(13));
 
-					ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + am.getAccount_no() + "'");
+					ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + am.getAccountNo() + "'");
 
 					if (rs1.next()) {
 						am.setAmount(rs1.getInt(2));

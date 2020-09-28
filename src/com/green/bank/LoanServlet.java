@@ -11,28 +11,29 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.green.bank.database.DatabaseOperations;
 import com.green.bank.model.LoanModel;
+import com.green.bank.util.DatabaseException;
 
 public class LoanServlet extends HttpServlet {
-	int loan_amount;
-	String account_no,first_name,last_name,address,email;
+
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		account_no = request.getParameter("account_no");
-		loan_amount = Integer.parseInt(request.getParameter("loan_amount"));
-		first_name = request.getParameter("first_name");
-		last_name = request.getParameter("last_name");
+		int loanAmount;
+		String accountNo;
+		String fName;
+		String lName;
+		String address;
+		String email;		
+		
+		accountNo = request.getParameter("account_no");
+		String status = "pending";
+		loanAmount = Integer.parseInt(request.getParameter("loan_amount"));
+		fName = request.getParameter("first_name");
+		lName = request.getParameter("last_name");
 		address = request.getParameter("address");
 		email = request.getParameter("email");
-
-		LoanModel lModel = new LoanModel();
-		lModel.setAccount_no(account_no);
-		lModel.setFirst_name(first_name);
-		lModel.setLast_name(last_name);
-		lModel.setAddress(address);
-		lModel.setEmail(email);
-		lModel.setLoan_amount(loan_amount);
-		lModel.setStatus("pending");
+		
+		LoanModel lModel = new LoanModel(accountNo, loanAmount, status, fName, lName, address, email );		
 
 		try {
 			DatabaseOperations operations = new DatabaseOperations();
@@ -48,8 +49,8 @@ public class LoanServlet extends HttpServlet {
 				request.setAttribute("error", "yes");
 				rd.forward(request, response);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (DatabaseException e) {
+			System.out.println("Unable to loan " + e.getMessage());
 		}
 	}
 

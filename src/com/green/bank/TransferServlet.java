@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.green.bank.database.DatabaseOperations;
 import com.green.bank.database.JDBC_Connect;
 import com.green.bank.model.AccountModel;
 import com.green.bank.model.MailMessage;
@@ -32,9 +33,10 @@ public class TransferServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String account_no, username, target_acc_no, password;
+		DatabaseOperations operation = new DatabaseOperations();
+		String accountNo, username, targetAccountNo, password;
 		boolean pass_wrong = false;
-		int own_amount = 0, transfer_amount, recipient_amount = 0;
+		int ownAmount = 0, transferAmount, recipientAmount = 0;
 		ReadWriteLock userLock = new ReentrantReadWriteLock();
 		ReadWriteLock adminLock = new ReentrantReadWriteLock();
 		Lock userWriteLock = userLock.writeLock();
@@ -42,27 +44,29 @@ public class TransferServlet extends HttpServlet {
 		Lock adminWriteLock = adminLock.writeLock();
 		Lock adminReadLock = adminLock.readLock();
 
-		account_no = request.getParameter("account_no");
+		accountNo = request.getParameter("account_no");
 		username = request.getParameter("username");
-		target_acc_no = request.getParameter("target_acc_no");
+		targetAccountNo = request.getParameter("target_acc_no");
 		password = request.getParameter("password");
-		transfer_amount = Integer.parseInt(request.getParameter("amount"));
-
+		transferAmount = Integer.parseInt(request.getParameter("amount"));
+		AccountModel ac = (AccountModel) request.getSession().getAttribute("userDetails");		
 		try {
 			Connection conn = JDBC_Connect.getConnection();
-
-			Statement stmt = conn.createStatement();
-
-			Connection conn1 = JDBC_Connect.getConnection();
-
-			Statement stmt1 = conn1.createStatement();
-
-			ResultSet rsOwn = stmt.executeQuery("select * from account where id='" + account_no + "' and username='"
-					+ username + "' and password='" + password + "'");
-
-			ResultSet rstTarget = stmt1.executeQuery("select * from account where id='" + target_acc_no + "'");
-
-			if (!rsOwn.isBeforeFirst() && !rstTarget.isBeforeFirst()) {
+			AccountModel target = operation.getAccountDetails(targetAccountNo);
+			// if the account doesnt exist or target account doesn't exist, return to the
+			// page.			
+			if (!operation.checkPassword(accountNo, password) && operation.checkAmountTable(targetAccountNo)) {
+				String mailTo = ac.getEmail();
+				String subject = "Transfer Fail";
+				String text = "Unable to access your account or the Target Account doesn't exist";
+				MailMessage mail = new MailMessage(mailTo, subject, text);
+				service.execute(() -> {
+					try {
+						SendMail.sendMail(mail);
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				});
 				request.setAttribute("isPassOK", "No");
 				RequestDispatcher rd = request.getRequestDispatcher("transfer.jsp");
 				rd.forward(request, response);
@@ -70,14 +74,21 @@ public class TransferServlet extends HttpServlet {
 				// compare username, if diff and session username is not admin, forward
 				// permission deny
 				// to transfer.jsp
-				String username2 = null;
-				while (rstTarget.next()) {
-					username2 = rstTarget.getString(8);
-				}
-				AccountModel ac = (AccountModel) request.getSession().getAttribute("userDetails");
 				String username1 = ac.getUsername();
+				String username2 = target.getUsername();
 				if (!username1.equals(username2) && !username1.equals("admin")) {
+					String mailTo = ac.getEmail();
 					request.setAttribute("error", "Permission deny: user can only tranfer between own accounts");
+					String subject = "Transfer Fail";
+					String text = "You can only Transfer between your own account";
+					MailMessage mail = new MailMessage(mailTo, subject, text);
+					service.execute(() -> {
+						try {
+							SendMail.sendMail(mail);
+						} catch (MessagingException e) {
+							e.printStackTrace();
+						}
+					});
 					RequestDispatcher rd = request.getRequestDispatcher("transfer.jsp");
 					rd.forward(request, response);
 				}
@@ -90,27 +101,41 @@ public class TransferServlet extends HttpServlet {
 				try {
 					if (username1.equals("admin")) {
 						adminReadLock.lock();
+						
+					} else {
 						userReadLock.lock();
-					} else {
-						adminReadLock.lock();
-					}
-					ResultSet rs1 = stmt.executeQuery("select * from amount where id ='" + account_no + "'");
-
-					while (rs1.next()) {
-						own_amount = rs1.getInt(2);
 					}
 
-					if (own_amount >= transfer_amount) {
-						own_amount -= transfer_amount;
-
-						ResultSet rs2 = stmt.executeQuery("select * from amount where id ='" + target_acc_no + "'");
-
-						while (rs2.next()) {
-							recipient_amount = rs2.getInt(2);
-						}
-
-						recipient_amount += transfer_amount;
+					ownAmount = operation.getCurrent(accountNo);
+					if (ownAmount >= transferAmount) {
+						ownAmount -= transferAmount;
+						recipientAmount = operation.getCurrent(targetAccountNo);
+						recipientAmount += transferAmount;
+						String mailTo = ac.getEmail();
+						String subject = "Transfer Success";
+						String text = "Your new balance is " + ownAmount;
+						MailMessage mail = new MailMessage(mailTo, subject, text);
+						service.execute(() -> {
+							try {
+								SendMail.sendMail(mail);
+							} catch (MessagingException e) {
+								e.printStackTrace();
+							}
+						});
 					} else {
+
+						String mailTo = ac.getEmail();
+						String subject = "Transfer Unsucessful";
+						String text = "You don't have enough money";
+						MailMessage mail = new MailMessage(mailTo, subject, text);
+						service.execute(() -> {
+							try {
+								SendMail.sendMail(mail);
+							} catch (MessagingException e) {
+								e.printStackTrace();
+							}
+						});
+
 						request.setAttribute("EnoughMoney", "No");
 						RequestDispatcher rd = request.getRequestDispatcher("transfer.jsp");
 						rd.forward(request, response);
@@ -118,29 +143,32 @@ public class TransferServlet extends HttpServlet {
 				} finally {
 					if (username1.equals("admin")) {
 						adminReadLock.unlock();
-						userReadLock.unlock();
+						
 					} else {
-						adminReadLock.unlock();
+						userReadLock.unlock();
 					}
 				}
 
 				try {
-					if (own_amount >= transfer_amount) {
+					if (ownAmount >= transferAmount) {
 						if (username1.equals("admin")) {
 							adminWriteLock.lock();
 						} else {
 							userWriteLock.lock();
 						}
+						
 						PreparedStatement ps = conn.prepareStatement("update amount set amount=? where id= ?");
-						ps.setInt(1, own_amount);
-						ps.setString(2, account_no);
+						ps.setInt(1, ownAmount);
+						ps.setString(2, accountNo);
 						ps.executeUpdate();
 
 						PreparedStatement ps1 = conn.prepareStatement("update amount set amount=? where id= ?");
-						ps1.setInt(1, recipient_amount);
-						ps1.setString(2, target_acc_no);
+						ps1.setInt(1, recipientAmount);
+						ps1.setString(2, targetAccountNo);
 						ps1.executeUpdate();
 					}
+				} catch (SQLException e) {
+					throw new DatabaseException("Error accessing the Amount Database" + e.getMessage());
 				} finally {
 					if (username1.equals("admin")) {
 						adminWriteLock.unlock();
@@ -148,20 +176,18 @@ public class TransferServlet extends HttpServlet {
 						userWriteLock.unlock();
 					}
 				}
-				if (own_amount >= transfer_amount) {
+				if (ownAmount >= transferAmount) {
 					RequestDispatcher rd = request.getRequestDispatcher("transfer_process.jsp");
 					rd.forward(request, response);
 				}
 			}
-			// execute takes in a runnable object
 
-			/*
-			 * service.execute(() -> { try { SendMail.sendMail(new MailMessage()); } catch
-			 * (MessagingException e) { e.printStackTrace(); } });
-			 */
+				// execute takes in a runnable object
+				/*
+				 * service.execute(() -> { try { SendMail.sendMail(new MailMessage()); } catch
+				 * (MessagingException e) { e.printStackTrace(); } });
+				 */
 
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}

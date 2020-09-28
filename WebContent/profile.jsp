@@ -12,13 +12,13 @@
 
 <%
 	ac = (AccountModel) session.getAttribute("userDetails");
-	String account_no = ac.getAccount_no();
+	String account_no = ac.getAccountNo();
 	DatabaseOperations operations = new DatabaseOperations();
 	ac = operations.getAccountDetails(account_no);
 %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title><%=ac.getFirst_name() + " " + ac.getLast_name()%></title>
+<title><%=ac.getFName() + " " + ac.getLName()%></title>
 <link rel="shortcut icon" type="image/png" href="image/favicon.png" />
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="css/profile.css" rel="stylesheet">
@@ -43,13 +43,13 @@
 
 
 					<div class="col-md-6 ">
-						<h2><%=ac.getFirst_name() + " " + ac.getLast_name()%></h2>
+						<h2><%=ac.getFName() + " " + ac.getLName()%></h2>
 						<ul>
 							<li class="navli"><span
 								class="glyphicon glyphicon-map-marker"></span> <%=ac.getBranch()%></li>
 							<li class="navli"><span class="glyphicon glyphicon-home"></span>
 								<%=ac.getAddress()%></li>
-							<li class="navli"><span class="glyphicon glyphicon-phone"></span><%=ac.getPhone_number()%></li>
+							<li class="navli"><span class="glyphicon glyphicon-phone"></span><%=ac.getPNumber()%></li>
 							<li class="navli"><span class="glyphicon glyphicon-envelope"></span><%=ac.getEmail()%></li>
 						</ul>
 					</div>
@@ -64,15 +64,15 @@
 						<tbody>
 							<tr>
 								<td><b>First Name:</b></td>
-								<td><%=ac.getFirst_name()%></td>
+								<td><%=ac.getFName()%></td>
 							</tr>
 							<tr>
 								<td><b>Last Name:</b></td>
-								<td><%=ac.getLast_name()%></td>
+								<td><%=ac.getLName()%></td>
 							</tr>
 							<tr>
 								<td><b>Account Number:</b></td>
-								<td><%=ac.getAccount_no()%></td>
+								<td><%=ac.getAccountNo()%></td>
 							</tr>
 							<tr>
 								<td><b>City</b></td>
@@ -92,7 +92,7 @@
 							</tr>
 							<tr>
 								<td><b>Phone Number</b></td>
-								<td><%=ac.getPhone_number()%></td>
+								<td><%=ac.getPNumber()%></td>
 							</tr>
 							<tr>
 								<td><b>Email</b></td>
@@ -100,15 +100,116 @@
 							</tr>
 							<tr>
 								<td><b>Account Type</b></td>
-								<td><%=ac.getAccount_type()%></td>
+								<td><%=ac.getAccountType()%></td>
 							</tr>
 							<tr>
 								<td><b>Registration Date</b></td>
-								<td><%=ac.getReg_date()%></td>
+								<td><%=ac.getRegisterDate()%></td>
 							</tr>
 							<tr>
 								<td><b>Amount</b></td>
 								<td><%=ac.getAmount()%>&#2547;</td>
+							</tr>
+						</tbody>
+					</table>
+					<%
+						
+						String Passport = (String) session.getAttribute("Passport");
+						String Address = (String) session.getAttribute("Address");
+						String SSN = (String) session.getAttribute("SSN");
+						String Check = (String) session.getAttribute("Check");
+						
+						System.out.println("File name: " + Passport);
+						System.out.println("File name: " + Address);
+						System.out.println("File name: " + SSN);
+						System.out.println("File name: " + Check);
+						if (!(Passport == null) || !(Address == null) || !(SSN == null) || !(Check == null)){							
+
+					%>
+					<table class="table table-user-information col-md-12">
+						<tbody>
+							<tr>
+								<td><b>Please wait while we review your files.</b></td>
+							</tr>
+
+							<%
+								if (Passport != null){
+							%>
+							<tr>
+								<td>
+									<div class="row col-md-12">
+										<form action="manageFile" method="get">
+											Passport File <input type="hidden" name="fileName" value="<%=Passport%>" />
+											<input type="submit" value="Download File" />
+										</form>
+									</div>
+								</td>
+							</tr>
+							<%
+								}
+							%>
+							<%
+								if (Address != null){
+							%>
+							<tr>
+								<td>
+									<div class="row col-md-12">
+										<form action="manageFile" method="get">
+											Address Verification File <input type="hidden" name="fileName" value="<%=Address%>" />
+											<input type="submit" value="Download File" />
+										</form>
+									</div>
+								</td>
+							</tr>
+							<%
+								}
+							%>
+							<%
+								if (SSN != null){
+							%>
+							<tr>
+								<td>
+									<div class="row col-md-12">
+										<form action="manageFile" method="get">
+											Social Security Number File<input type="hidden" name="fileName" value="<%=SSN%>" />
+											<input type="submit" value="Download File" />
+										</form>
+									</div>
+								</td>
+							</tr>
+							<%
+								}
+							%>
+							<%
+								if (Check != null){
+							%>
+							<tr>
+								<td>
+									<div class="row col-md-12">
+										<form action="manageFile" method="get">
+											Check Information <input type="hidden" name="fileName" value="<%=Check%>" />
+											<input type="submit" value="Download File" />
+										</form>
+									</div>
+								</td>
+							</tr>
+							<%
+								}
+							%>
+						</tbody>
+					</table>
+
+					<%
+						}
+					%>
+					<table class="table table-user-information col-md-12">
+						<tbody>
+							<tr>
+								<td>Please upload the following Files. Otherwise your
+									account will be close within 3 days</td>
+							</tr>
+							<tr>
+								<td><jsp:include page="FileUpload.jsp" /></td>
 							</tr>
 						</tbody>
 					</table>

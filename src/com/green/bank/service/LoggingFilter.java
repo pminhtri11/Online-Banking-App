@@ -12,8 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-//@WebFilter(urlPatterns = "/homeOnly")
-@WebFilter(urlPatterns = "*")
+@WebFilter(filterName= "authoFilter", urlPatterns = "*")
 public class LoggingFilter implements Filter {
 	Logger logger = Logger.getLogger(LoggingFilter.class);
 //	BasicConfigurator.configure();
@@ -26,5 +25,4 @@ public class LoggingFilter implements Filter {
 		chain.doFilter(request, response); // go ahead
 //		logger.info("Response sent for url: " + req.getRequestURL());
 	}
-
 }

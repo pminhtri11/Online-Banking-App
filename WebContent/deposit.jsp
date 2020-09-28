@@ -37,7 +37,7 @@
 					<div class="col-sm-8 form-group">
 						<input type="text" required placeholder="Enter Account No.."
 							class="form-control" name="account_no"
-							value="<%=ac.getAccount_no()%>">
+							value="<%=ac.getAccountNo()%>">
 					</div>
 					<label class="col-md-4 control-label">User Name</label>
 					<div class="col-sm-8 form-group">

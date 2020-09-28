@@ -49,11 +49,11 @@
 					<div class="col-sm-8 form-group">
 						<input type="text" required placeholder="Enter Account No.."
 							name="account_no" class="form-control"
-							value="<%=ac.getAccount_no()%>">
+							value="<%=ac.getAccountNo()%>">
 					</div>
 					<label class="col-md-4 control-label">Target Account No</label>
 					<div class="col-sm-8 form-group">
-						<input type="text" required placeholder="Enter Account No.."
+						<input type="number" required placeholder="Enter Account No.."
 							name="target_acc_no" class="form-control">
 					</div>
 					<label class="col-md-4 control-label">User Name</label>

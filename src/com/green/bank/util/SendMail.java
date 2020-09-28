@@ -1,5 +1,6 @@
 package com.green.bank.util;
 
+import javax.mail.*;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -16,14 +17,45 @@ public class SendMail {
 
 	public static void sendMail(MailMessage m) throws AddressException, MessagingException {
 
-		Properties properties = System.getProperties();
-		properties.setProperty("mail.smtp.host", m.getHost());
-		Session session = Session.getDefaultInstance(properties);
-		MimeMessage message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(m.getFrom()));
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(m.getTo()));
-		message.setSubject(m.getSubject());
-		message.setText(m.getText());
-		Transport.send(message);
+		
+		String host = "smtp.gmail.com";
+		String username = "bankingtest135@gmail.com";
+		String password = "bankingProject12";
+		
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host",host);
+	    props.put("mail.smtp.port", "465");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.auth", "true");
+		
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+
+            protected PasswordAuthentication getPasswordAuthentication() {
+
+                return new PasswordAuthentication(username, password);
+
+            }
+
+        });        
+        session.setDebug(true);
+        
+		try {
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(username));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(m.getTo()));
+			message.setSubject(m.getSubject());
+			message.setText(m.getText());
+			
+			Transport transport = session.getTransport("smtp");
+	        transport.connect(host, username, password);
+            System.out.println("sending...");
+            // Send message
+            Transport.send(message);
+            System.out.println("Sent message successfully....");
+
+			
+		}catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
 	}
 }

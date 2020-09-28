@@ -92,7 +92,7 @@
 										</div>
 										<div class="col-md-8">
 											<p class="text-left">
-												<strong><%=ac.getFirst_name() + " " + ac.getLast_name()%></strong>
+												<strong><%=ac.getFName() + " " + ac.getLName()%></strong>
 											</p>
 											<p class="text-left small"><%=ac.getEmail()%>
 											</p>

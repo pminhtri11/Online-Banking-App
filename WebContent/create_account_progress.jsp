@@ -42,11 +42,16 @@
 				</p>
 				<p class="mb-0">
 					<b>Account Number: </b>
-					<%=model.getAccount_no()%>
+					<%=model.getAccountNo() %>
 				</p>
 				<p class="mb-0">
 					<b>Amount: </b>
 					<%=model.getAmount()%>
+				</p>
+
+				<p class="mb-0">
+					Please log in to submit your neccesary documents
+					<a href="login.jsp" class="btn btn-info" role="button">Login</a>
 				</p>
 			</div>
 		</div>

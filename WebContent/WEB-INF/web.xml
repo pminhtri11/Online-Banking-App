@@ -5,14 +5,14 @@
   http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" 
   version="4.0">
   <display-name>Online Banking System</display-name>
-<!--   <servlet> -->
-<!--     <servlet-name>CreateAccount</servlet-name> -->
-<!--     <servlet-class>com.green.bank.CreateAccountServlet</servlet-class> -->
-<!--   </servlet> -->
-<!--   <servlet-mapping> -->
-<!--     <servlet-name>CreateAccount</servlet-name> -->
-<!--     <url-pattern>/CreateAccountServlet</url-pattern> -->
-<!--   </servlet-mapping> -->
+  <servlet>
+    <servlet-name>CreateAccount</servlet-name>
+    <servlet-class>com.green.bank.CreateAccountServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CreateAccount</servlet-name>
+    <url-pattern>/CreateAccountServlet</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>Login</servlet-name>
     <servlet-class>com.green.bank.LoginServlet</servlet-class>

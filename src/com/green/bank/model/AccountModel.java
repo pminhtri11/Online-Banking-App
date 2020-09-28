@@ -1,5 +1,7 @@
 package com.green.bank.model;
 
+import com.green.bank.util.AccountInvalidException;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,18 +10,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountModel {
-	String account_no;
-	String first_name;
-	String last_name;
+	String accountNo;
+	String fName;
+	String lName;
 	String address;
 	String city;
 	String branch;
 	String zip;
 	String username;
 	String password;
-	String reg_date;
-	String phone_number;
+	String registerDate;
+	String pNumber;
 	String email;
-	String account_type;
+	String accountType;
 	int amount;
+	
 }

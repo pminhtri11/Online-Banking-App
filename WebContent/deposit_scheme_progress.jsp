@@ -43,7 +43,7 @@
 				</p>
 				<p class="mb-0">
 					<b>Account Number: </b>
-					<%=model.getAccount_no()%>
+					<%=model.getAccountNo()%>
 				</p>
 				<p class="mb-0">
 					<b>Scheme Name: </b>

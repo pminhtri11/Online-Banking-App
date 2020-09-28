@@ -24,7 +24,7 @@
 
 	<%
 		ac = (AccountModel) session.getAttribute("userDetails");
-		String account_no = ac.getAccount_no();
+		String account_no = ac.getAccountNo();
 		DatabaseOperations operations = new DatabaseOperations();
 		ac = operations.getAccountDetails(account_no);
 	%>
@@ -38,7 +38,7 @@
 				</p>
 				<p class="mb-0">
 					<b>Account Number: </b>
-					<%=ac.getAccount_no()%>
+					<%=ac.getAccountNo()%>
 				</p>
 				<p class="mb-0">
 					<b>Amount: </b>
